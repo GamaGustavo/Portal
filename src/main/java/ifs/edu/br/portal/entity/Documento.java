@@ -1,15 +1,14 @@
 package ifs.edu.br.portal.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
 public class Documento {
     @Id
-    private Long id;
+    @GeneratedValue( strategy = GenerationType.IDENTITY)
+    private Integer id;
     public TipoArquivo tipoArquivo;
     @Column(length = 200)
     public String caminhoArquivo;
