@@ -8,7 +8,7 @@ import lombok.Data;
 public class ShapeFile  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     @Column(length = 200)
     public String caminhoArquivo;
 }
