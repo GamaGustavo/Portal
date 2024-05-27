@@ -1,5 +1,5 @@
 package ifs.edu.br.portal.service;
-import ifs.edu.br.portal.Repository.ShapeFileRepository;
+import ifs.edu.br.portal.repository.ShapeFileRepository;
 import ifs.edu.br.portal.entity.ShapeFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

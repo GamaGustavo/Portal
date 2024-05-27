@@ -1,6 +1,6 @@
 package ifs.edu.br.portal.service;
 
-import ifs.edu.br.portal.Repository.DocumentoRepository;
+import ifs.edu.br.portal.repository.DocumentoRepository;
 import ifs.edu.br.portal.entity.Documento;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,6 +1,6 @@
 package ifs.edu.br.portal.service;
 
-import ifs.edu.br.portal.Repository.MapaRepository;
+import ifs.edu.br.portal.repository.MapaRepository;
 import ifs.edu.br.portal.entity.Mapa;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package ifs.edu.br.portal.Repository;
+package ifs.edu.br.portal.repository;
 
 import ifs.edu.br.portal.entity.Documento;
 import org.springframework.data.jpa.repository.JpaRepository;

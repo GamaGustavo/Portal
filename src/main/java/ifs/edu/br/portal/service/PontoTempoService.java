@@ -1,6 +1,6 @@
 package ifs.edu.br.portal.service;
 
-import ifs.edu.br.portal.Repository.PontoTempoRepository;
+import ifs.edu.br.portal.repository.PontoTempoRepository;
 import ifs.edu.br.portal.entity.PontoTempo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

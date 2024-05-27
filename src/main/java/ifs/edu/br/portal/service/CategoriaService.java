@@ -1,6 +1,6 @@
 package ifs.edu.br.portal.service;
 
-import ifs.edu.br.portal.Repository.CategoriaRepository;
+import ifs.edu.br.portal.repository.CategoriaRepository;
 import ifs.edu.br.portal.entity.Categoria;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

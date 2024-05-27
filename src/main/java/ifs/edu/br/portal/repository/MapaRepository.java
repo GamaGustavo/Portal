@@ -1,4 +1,4 @@
-package ifs.edu.br.portal.Repository;
+package ifs.edu.br.portal.repository;
 
 import ifs.edu.br.portal.entity.Categoria;
 import ifs.edu.br.portal.entity.Mapa;
