@@ -13,7 +13,6 @@ import java.util.Map;
 
 @Configuration
 public class GeoToolsDataStoreConfig {
-
    @Bean
     public DataStore dataStore(DataSource dataSource) throws Exception {
         Map<String, Object> params = new HashMap<>();
@@ -24,7 +23,7 @@ public class GeoToolsDataStoreConfig {
         params.put(PostgisNGDataStoreFactory.HOST.key, dataSource1.getServerNames()[0]);
         params.put(PostgisNGDataStoreFactory.PORT.key, dataSource1.getPortNumbers()[0]);
         params.put(PostgisNGDataStoreFactory.DATABASE.key, dataSource1.getDatabaseName());
-        params.put(PostgisNGDataStoreFactory.SCHEMA.key, "public");
+        params.put(PostgisNGDataStoreFactory.SCHEMA.key, "shape_files");
         return DataStoreFinder.getDataStore(params);
     }
 }
