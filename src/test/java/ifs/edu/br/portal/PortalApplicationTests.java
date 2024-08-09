@@ -26,19 +26,5 @@ class PortalApplicationTests {
     void contextLoads() {
 
     }
-    public static void main(String[] args) throws Exception {
-        GeoServerApi geoServerApi = new GeoServerApi("http://localhost:8080/geoserver", "admin", "geoserver");
-        /*geoServerApi.createWorkspace("myWorkspace3");
-
-        geoServerApi.createPostGISDataStore("myWorkspace3", "myDataStore3", "172.18.0.3", 5432, "mydatabase", "myuser", "secret");
-*/
-        String layerUrl = geoServerApi.createLayer("myWorkspace3", "myDataStore3", "BR_UF_202214893172114710448431", "BR_UF_202214893172114710448431");
-        System.out.println("Layer URL: " + layerUrl);
-
-        String layers = geoServerApi.listLayers();
-        System.out.println("Layers: " + layers);
-
-
-    }
 
 }
