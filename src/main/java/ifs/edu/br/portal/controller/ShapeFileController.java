@@ -8,7 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@RestController("shape-file")
+@RestController
+@RequestMapping("shape-file")
 public class ShapeFileController {
 
     private final ShapeFileService shapeFileService;

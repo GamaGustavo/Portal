@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("mapas")
+@RestController
+@RequestMapping("/mapa")
 public class MpaController {
 
     private final MapaService mapaService;
@@ -42,6 +43,7 @@ public class MpaController {
         mapa.setNome(nome);
         return mapaService.filtrar(mapa);
     }
+
     @GetMapping("filtrar-id")
     public List<Mapa> filtrar(@RequestParam Integer id) {
         var mapa = new Mapa();

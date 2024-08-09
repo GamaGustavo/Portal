@@ -20,7 +20,8 @@ public class GeoServerApi {
     public GeoServerApi(
             @Value("${geoserver.baseurl}") String baseUrl,
             @Value("${geoserver.username}") String username,
-            @Value("${geoserver.password}") String password, DataSource dataSource) {
+            @Value("${geoserver.password}") String password, 
+            DataSource dataSource) {
         this.baseUrl = baseUrl;
         this.dataSource = (PGSimpleDataSource) dataSource;
         this.webClient = WebClient.builder()
