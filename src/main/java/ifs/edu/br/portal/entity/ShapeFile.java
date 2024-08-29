@@ -15,7 +15,7 @@ public class ShapeFile  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(length = 200)
-    public String caminhoArquivo;
+    private String caminhoArquivo;
 
     @Override
     public final boolean equals(Object o) {

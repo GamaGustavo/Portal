@@ -2,15 +2,18 @@ package ifs.edu.br.portal.service;
 
 import ifs.edu.br.portal.entity.ShapeFile;
 import ifs.edu.br.portal.repository.ShapeFileRepository;
-import org.geotools.api.data.DataStore;
-import org.geotools.api.data.DataStoreFinder;
-import org.geotools.api.data.SimpleFeatureSource;
-import org.geotools.api.data.SimpleFeatureStore;
+import org.geotools.api.data.*;
+import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.api.filter.Filter;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.feature.FeatureCollection;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,23 +51,10 @@ public class ShapeFileService {
         return repository.findAllByPontoTempo(idPonto);
     }
 
-   /* public String uploadShapefile(MultipartFile file) throws IOException {
-        try (InputStream inputStream = file.getInputStream()) {
-            byte[] magicNumberBytes = new byte[4];
-            if (inputStream.read(magicNumberBytes) != 4) {
-                Logger.getLogger(this.getClass().getName()).severe("False");
-                return "false";
-            }
-            int magicNumber = ByteBuffer.wrap(magicNumberBytes).order(ByteOrder.BIG_ENDIAN).getInt();
-            Logger.getLogger(this.getClass().getName()).severe(magicNumber + "");
-            return "" + (magicNumber == 9994);
-
-        }*/
-
     public String uploadShapefile(MultipartFile file) {
         try {
             Path tempFile = getTempFile(file);
-
+/*
             // Cria o ShapefileDataStore
             DataStore dataTempFile = DataStoreFinder.getDataStore(Collections.singletonMap("url", tempFile.toUri().toURL()));
 
@@ -77,8 +67,7 @@ public class ShapeFileService {
             dataStore.createSchema(simpleFeatureType);
             SimpleFeatureStore featureStore = (SimpleFeatureStore) dataStore.getFeatureSource(inputTypeName);
             featureStore.addFeatures(source.getFeatures(Filter.INCLUDE));
-            dataTempFile.dispose();
-            /*
+            dataTempFile.dispose();*/
 
            ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
             ShapefileDataStore shapefileDataStore = (ShapefileDataStore) dataStoreFactory.createDataStore(tempFile.toUri().toURL());
@@ -87,10 +76,14 @@ public class ShapeFileService {
             FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection = shapefileDataStore.getFeatureSource().getFeatures();
 
             // Adiciona as features no DataStore (PostGIS)
-           SimpleFeatureStore featureStore = (SimpleFeatureStore) dataStore.getFeatureSource(file.getName());
+            String inputTypeName = Arrays.stream(shapefileDataStore.getTypeNames()).findFirst().orElse("");
+            SimpleFeatureType simpleFeatureType = shapefileDataStore.getSchema(inputTypeName);
+            dataStore.createSchema(simpleFeatureType);
+            SimpleFeatureStore featureStore = (SimpleFeatureStore) dataStore.getFeatureSource(inputTypeName);
             featureStore.setTransaction(Transaction.AUTO_COMMIT);
             featureStore.addFeatures(featureCollection);
-*/
+
+            shapefileDataStore.dispose();
             // Deleta o arquivo temporário
             Files.delete(tempFile);
 

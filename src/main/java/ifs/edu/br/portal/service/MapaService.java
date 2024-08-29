@@ -12,9 +12,11 @@ import java.util.Optional;
 @Service
 public class MapaService {
     private final MapaRepository repository;
+    private final GeoServerApi geoServerApi;
 
-    public MapaService(MapaRepository repository) {
+    public MapaService(MapaRepository repository, GeoServerApi geoServerApi) {
         this.repository = repository;
+        this.geoServerApi = geoServerApi;
     }
 
     @Transactional

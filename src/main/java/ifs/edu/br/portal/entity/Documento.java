@@ -14,9 +14,9 @@ public class Documento {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     private Integer id;
-    public TipoArquivo tipoArquivo;
+    private TipoArquivo tipoArquivo;
     @Column(length = 200)
-    public String caminhoArquivo;
+    private String caminhoArquivo;
 
     @Override
     public final boolean equals(Object o) {

@@ -16,15 +16,15 @@ public class PontoTempo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(length = 60)
-    public String nome;
+    private String nome;
     @Column(columnDefinition = "text", length = 1000)
-    public String descricao;
+    private String descricao;
     @ManyToMany
     @ToString.Exclude
-    public List<ShapeFile> shapeFiles;
+    private List<ShapeFile> shapeFiles;
     @ManyToMany
     @ToString.Exclude
-    public List<Documento> documentos;
+    private List<Documento> documentos;
 
     @Override
     public final boolean equals(Object o) {
