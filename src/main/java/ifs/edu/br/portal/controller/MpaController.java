@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/mapa")
 public class MpaController {
@@ -19,6 +20,7 @@ public class MpaController {
 
     @PostMapping
     public ResponseEntity<Integer> cadastrar(@RequestBody Mapa obj) {
+
         return ResponseEntity.ok(mapaService.cadastrar(obj));
     }
 

@@ -23,7 +23,7 @@ public class GeoToolsDataStoreConfig {
         params.put(PostgisNGDataStoreFactory.HOST.key, dataSource1.getServerNames()[0]);
         params.put(PostgisNGDataStoreFactory.PORT.key, dataSource1.getPortNumbers()[0]);
         params.put(PostgisNGDataStoreFactory.DATABASE.key, dataSource1.getDatabaseName());
-        params.put(PostgisNGDataStoreFactory.SCHEMA.key, "shape_files");
+        params.put(PostgisNGDataStoreFactory.SCHEMA.key, "public");
         return DataStoreFinder.getDataStore(params);
     }
 }
