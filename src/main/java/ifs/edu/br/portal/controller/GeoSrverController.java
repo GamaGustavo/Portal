@@ -4,6 +4,7 @@ import ifs.edu.br.portal.service.GeoServerApi;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("geoserver")
 public class GeoSrverController {
