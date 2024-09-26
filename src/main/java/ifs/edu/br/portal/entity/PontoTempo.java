@@ -15,13 +15,17 @@ public class PontoTempo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(length = 60)
     private String nome;
+
+    @OneToMany(mappedBy = "pontoTempo")
+    @ToString.Exclude
+    private List<PontoTempoShapeFile> pontoTempoShapeFiles;
+
     @Column(columnDefinition = "text", length = 1000)
     private String descricao;
-    @ManyToMany
-    @ToString.Exclude
-    private List<ShapeFile> shapeFiles;
+
     @ManyToMany
     @ToString.Exclude
     private List<Documento> documentos;
