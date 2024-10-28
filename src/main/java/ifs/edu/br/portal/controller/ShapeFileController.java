@@ -1,6 +1,7 @@
 package ifs.edu.br.portal.controller;
 
 import ifs.edu.br.portal.entity.ShapeFile;
+import ifs.edu.br.portal.exception.BadRequestException;
 import ifs.edu.br.portal.service.ShapeFileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +22,11 @@ public class ShapeFileController {
 
 
     @PostMapping("/uploadShapefile")
-    public String uploadShapefile(@RequestBody MultipartFile file)  {
-        if (file != null && !file.isEmpty()) {
-            return shapeFileService.uploadShapefile(file);
+    public ResponseEntity<List<ShapeFile>> cadastrar(@RequestBody List<MultipartFile> files)  {
+        if (files != null && !files.isEmpty()){
+            return ResponseEntity.ok(shapeFileService.cadastrar(files));
         }
-        return "O arquivo está vazio";
+        throw new BadRequestException("Nenhum ShapeFile encontrado no corpo da requisição.");
     }
 
     @PostMapping

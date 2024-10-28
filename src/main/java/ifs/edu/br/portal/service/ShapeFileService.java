@@ -2,25 +2,24 @@ package ifs.edu.br.portal.service;
 
 import ifs.edu.br.portal.entity.ShapeFile;
 import ifs.edu.br.portal.repository.ShapeFileRepository;
-import org.geotools.api.data.*;
+import org.geotools.api.data.DataStore;
+import org.geotools.api.data.SimpleFeatureStore;
+import org.geotools.api.data.Transaction;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
-import org.geotools.api.filter.Filter;
-import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.feature.FeatureCollection;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -29,9 +28,12 @@ public class ShapeFileService {
 
     private final DataStore dataStore;
 
-    public ShapeFileService(ShapeFileRepository repository, DataStore dataStore) {
+    private final GeoServerApi geoServerApi;
+
+    public ShapeFileService(ShapeFileRepository repository, DataStore dataStore, GeoServerApi geoServerApi) {
         this.repository = repository;
         this.dataStore = dataStore;
+        this.geoServerApi = geoServerApi;
     }
 
     @Transactional
@@ -51,7 +53,7 @@ public class ShapeFileService {
         return repository.findAllByPontoTempo(idPonto);
     }
 
-    public String uploadShapefile(MultipartFile file) {
+    private String uploadShapefile(MultipartFile file) {
         try {
             Path tempFile = getTempFile(file);
 /*
@@ -82,24 +84,34 @@ public class ShapeFileService {
             SimpleFeatureStore featureStore = (SimpleFeatureStore) dataStore.getFeatureSource(inputTypeName);
             featureStore.setTransaction(Transaction.AUTO_COMMIT);
             featureStore.addFeatures(featureCollection);
-
+            var nativeName = tempFile.getFileName().toString();
             shapefileDataStore.dispose();
             // Deleta o arquivo temporário
             Files.delete(tempFile);
 
-            return "Shapefile carregado com sucesso!";
+            return nativeName;
         } catch (Exception e) {
-            e.printStackTrace();
-            return "Erro ao carregar o shapefile: " + e.getMessage();
+            throw new RuntimeException("Erro ao carregar o shapefile: " + e.getMessage());
         }
     }
 
     private static Path getTempFile(MultipartFile file) throws IOException {
         // Salva o arquivo no disco temporariamente
-        Path tempFile = Files.createTempFile(file.getOriginalFilename().replace(".shp",""), ".shp");
+        Path tempFile = Files.createTempFile(Objects.requireNonNull(file.getOriginalFilename()).replace(".shp",""), ".shp");
         Files.write(tempFile, file.getBytes());
         return tempFile;
     }
 
+    public List<ShapeFile> cadastrar(List<MultipartFile> files) {
+        var shapes = files.stream().map(multipartFile -> {
+            var nativeName = uploadShapefile(multipartFile);
+            var layerName = Objects.requireNonNull(multipartFile.getOriginalFilename()).replace(".shp","");
+            var resposta = geoServerApi.createLayer("geo_portal_wk","geo_portal_ds",layerName,nativeName);
+            var shape = new ShapeFile();
+            shape.setCaminhoArquivo(resposta.toString());
+            return shape;
+        }).toList();
+       return repository.saveAll(shapes);
+    }
 }
 

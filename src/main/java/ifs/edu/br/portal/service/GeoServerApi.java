@@ -20,7 +20,7 @@ public class GeoServerApi {
     public GeoServerApi(
             @Value("${geoserver.baseurl}") String baseUrl,
             @Value("${geoserver.username}") String username,
-            @Value("${geoserver.password}") String password, 
+            @Value("${geoserver.password}") String password,
             DataSource dataSource) {
         this.baseUrl = baseUrl;
         this.dataSource = (PGSimpleDataSource) dataSource;
@@ -55,9 +55,29 @@ public class GeoServerApi {
     }
 
     public Mono<String> createLayer(String workspaceName, String datastoreName, String layerName, String nativeName) {
-        String payload = String.format(
-                "{\"featureType\": {\"name\": \"%s\", \"nativeName\": \"%s\"}}",
-                layerName, nativeName);
+        String payload = String.format("""
+                {
+                "name": "%s",
+                "nativeName": "%s",
+                "namespace": {
+                    "name": "%s"
+                },
+                "title": "%s",
+                "srs": "EPSG:4326",
+                "cqlFilter": "INCLUDE",
+                "maxFeatures": 100,
+                "numDecimals": 6,
+                "responseSRS": {
+                    "string": [
+                        4326
+                    ]
+                },
+                "overridingServiceSRS": true,
+                "skipNumberMatched": true,
+                "circularArcPresent": true,
+                "linearizationTolerance": 10,
+                }
+                """, datastoreName, nativeName, layerName, layerName);
 
         return webClient.post()
                 .uri(String.format("/rest/workspaces/%s/datastores/%s/featuretypes", workspaceName, datastoreName))
@@ -65,7 +85,10 @@ public class GeoServerApi {
                 .bodyValue(payload)
                 .retrieve()
                 .bodyToMono(String.class)
-                .map(response -> String.format("%s/%s/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=%s:%s&outputFormat=application/json", baseUrl, workspaceName, workspaceName, layerName));
+                .map(response -> baseUrl + "/" + workspaceName + "/ows?service=WFS&version=1.3.0&request=GetFeature&typeName=" + workspaceName + "%3" + layerName + "&maxFeatures=100&outputFormat=application%2Fjson");
+
+        //String.format("%s/%s/ows?service=WFS&version=1.3.0&request=GetFeature&typeName=%s:%s&outputFormat=application/json", baseUrl, workspaceName, workspaceName, layerName));
+
     }
 
     public Mono<String> listLayers(String workspaceName) {
