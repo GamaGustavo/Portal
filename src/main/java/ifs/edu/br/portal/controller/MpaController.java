@@ -20,7 +20,6 @@ public class MpaController {
 
     @PostMapping
     public ResponseEntity<Integer> cadastrar(@RequestBody Mapa obj) {
-
         return ResponseEntity.ok(mapaService.cadastrar(obj));
     }
 
@@ -29,9 +28,10 @@ public class MpaController {
         return ResponseEntity.of(mapaService.editar(obj));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Mapa> deletar(@RequestParam Integer id) {
-        return ResponseEntity.of(mapaService.deletar(id));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
+        mapaService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping()

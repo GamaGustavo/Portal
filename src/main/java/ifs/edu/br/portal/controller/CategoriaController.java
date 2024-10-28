@@ -19,21 +19,22 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public Integer cadastrar(@RequestBody Categoria novaCategoria) {
-        return categoriaService.cadastrar(novaCategoria);
+    public ResponseEntity<Integer> cadastrar(@RequestBody Categoria novaCategoria) {
+        return ResponseEntity.ok(categoriaService.cadastrar(novaCategoria));
     }
 
     @PutMapping
     public ResponseEntity<Categoria> editar(@RequestBody Categoria categoria) {
-        return ResponseEntity.of(categoriaService.editar(categoria));
+        return ResponseEntity.ok(categoriaService.editar(categoria));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Categoria> deletar(@RequestParam Integer id) {
-        return ResponseEntity.of(categoriaService.deletar(id));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
+        categoriaService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<Categoria>> listarTodos() {
         return ResponseEntity.ok(categoriaService.listarTodos());
     }

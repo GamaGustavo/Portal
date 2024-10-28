@@ -1,5 +1,6 @@
 package ifs.edu.br.portal.service;
 
+import ifs.edu.br.portal.exception.ResourceNotFoundException;
 import ifs.edu.br.portal.repository.CategoriaRepository;
 import ifs.edu.br.portal.entity.Categoria;
 import org.springframework.beans.BeanUtils;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CategoriaService  {
+public class CategoriaService {
 
     public final CategoriaRepository repository;
 
@@ -26,20 +27,22 @@ public class CategoriaService  {
     }
 
     @Transactional
-    public Optional<Categoria> editar(Categoria categoria){
+    public Categoria editar(Categoria categoria) {
         Optional<Categoria> categoriaOptional = repository.findById(categoria.getId());
-        if (categoriaOptional.isPresent()){
+        if (categoriaOptional.isPresent()) {
             BeanUtils.copyProperties(categoria, categoriaOptional.get(), "id");
-            return Optional.of(repository.save(categoriaOptional.get()));
+            return repository.save(categoriaOptional.get());
         }
-        return categoriaOptional;
+        throw new ResourceNotFoundException("Nenhuma categoria encontrada.");
     }
 
     @Transactional
-    public Optional<Categoria> deletar(Integer id) {
+    public void deletar(Integer id) throws ResourceNotFoundException {
         Optional<Categoria> categoriaOptional = repository.findById(id);
-        categoriaOptional.ifPresent(repository::delete);
-        return categoriaOptional;
+        categoriaOptional.ifPresentOrElse(repository::delete, () -> {
+            throw new ResourceNotFoundException("Nenhuma categoria encontrada.");
+        });
+
     }
 
 

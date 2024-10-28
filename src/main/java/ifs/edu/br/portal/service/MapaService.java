@@ -1,5 +1,6 @@
 package ifs.edu.br.portal.service;
 
+import ifs.edu.br.portal.exception.ResourceNotFoundException;
 import ifs.edu.br.portal.repository.MapaRepository;
 import ifs.edu.br.portal.entity.Mapa;
 import org.springframework.beans.BeanUtils;
@@ -35,10 +36,10 @@ public class MapaService {
     }
 
     @Transactional
-    public Optional<Mapa> deletar(Integer id) {
+    public void deletar(Integer id) throws ResourceNotFoundException {
         Optional<Mapa> opMap = repository.findById(id);
-        opMap.ifPresent((value) -> repository.deleteById(value.getId()));
-        return opMap;
+        opMap.ifPresentOrElse((value) -> repository.deleteById(value.getId()),
+                () -> {throw new ResourceNotFoundException("Não foi encontrado um mapa com o id " + id);});
     }
 
 
