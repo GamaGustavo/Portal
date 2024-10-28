@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +26,9 @@ public class PontoTempo {
 
     @Column(columnDefinition = "text", length = 1000)
     private String descricao;
+
+    @Column
+    private LocalDate data;
 
     @ManyToMany
     @ToString.Exclude
