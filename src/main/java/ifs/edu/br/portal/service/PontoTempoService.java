@@ -1,5 +1,7 @@
 package ifs.edu.br.portal.service;
 
+import ifs.edu.br.portal.entity.PontoTempoShapeFile;
+import ifs.edu.br.portal.entity.PontoTempoShapeFileId;
 import ifs.edu.br.portal.repository.PontoTempoRepository;
 import ifs.edu.br.portal.entity.PontoTempo;
 import org.springframework.beans.BeanUtils;
@@ -13,14 +15,33 @@ import java.util.Optional;
 public class PontoTempoService {
 
     private final PontoTempoRepository repository;
+    private final PontoTempoShapeFileService shapeFileService;
 
-    public PontoTempoService(PontoTempoRepository repository) {
+    public PontoTempoService(PontoTempoRepository repository, PontoTempoShapeFileService shapeFileService) {
         this.repository = repository;
+        this.shapeFileService = shapeFileService;
     }
 
     @Transactional
     public Integer cadastrar(PontoTempo novaPontoTempo) {
-        return repository.save(novaPontoTempo).getId();
+        var newPontoTempo = new PontoTempo();
+        newPontoTempo.setData(novaPontoTempo.getData());
+        newPontoTempo.setNome(novaPontoTempo.getNome());
+        newPontoTempo.setDescricao(novaPontoTempo.getDescricao());
+        newPontoTempo.setDocumentos(novaPontoTempo.getDocumentos());
+        newPontoTempo =  repository.save(newPontoTempo);
+
+        for (PontoTempoShapeFile ps :  novaPontoTempo.getPontoTempoShapeFiles()){
+            ps.setPontoTempo(newPontoTempo);
+            var id = new PontoTempoShapeFileId();
+            id.setPontoTempoId(newPontoTempo.getId());
+            id.setShapeFileId(ps.getShapeFile().getId());
+            ps.setId(id);
+            shapeFileService.salvar(ps);
+        }
+
+        return newPontoTempo.getId();
+
     }
 
     @Transactional

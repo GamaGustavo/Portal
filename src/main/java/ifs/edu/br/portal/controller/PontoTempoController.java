@@ -20,22 +20,22 @@ public class PontoTempoController {
     }
 
     @PostMapping
-    public ResponseEntity<Integer> cadastrar(PontoTempo novaPontoTempo) {
+    public ResponseEntity<Integer> cadastrar(@RequestBody PontoTempo novaPontoTempo) {
         return ResponseEntity.ok(pontoTempoService.cadastrar(novaPontoTempo));
     }
 
     @PutMapping
-    public ResponseEntity<PontoTempo> editar(PontoTempo pontoTempo) {
+    public ResponseEntity<PontoTempo> editar(@RequestBody PontoTempo pontoTempo) {
         return ResponseEntity.of(pontoTempoService.editar(pontoTempo));
     }
 
     @DeleteMapping
-    public ResponseEntity<PontoTempo> deletar(Integer id) {
+    public ResponseEntity<PontoTempo> deletar(@RequestParam Integer id) {
         return ResponseEntity.of(pontoTempoService.deletar(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<PontoTempo>> listarPorMapa(Integer idMapa) {
+    public ResponseEntity<List<PontoTempo>> listarPorMapa(@RequestParam Integer idMapa) {
         return ResponseEntity.ok(pontoTempoService.listarPorMapa(idMapa));
     }
 
