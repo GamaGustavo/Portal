@@ -1,7 +1,10 @@
 package ifs.edu.br.portal.service;
 
 import ifs.edu.br.portal.entity.ShapeFile;
+import ifs.edu.br.portal.exception.ResourceNotFoundException;
+import ifs.edu.br.portal.http.GeoServerWebclient;
 import ifs.edu.br.portal.repository.ShapeFileRepository;
+import ifs.edu.br.portal.util.Utils;
 import org.geotools.api.data.DataStore;
 import org.geotools.api.data.SimpleFeatureStore;
 import org.geotools.api.data.Transaction;
@@ -10,6 +13,7 @@ import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.feature.FeatureCollection;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,12 +32,12 @@ public class ShapeFileService {
 
     private final DataStore dataStore;
 
-    private final GeoServerApi geoServerApi;
+    private final GeoServerWebclient geoServerWebclient;
 
-    public ShapeFileService(ShapeFileRepository repository, DataStore dataStore, GeoServerApi geoServerApi) {
+    public ShapeFileService(ShapeFileRepository repository, DataStore dataStore, GeoServerWebclient geoServerWebclient) {
         this.repository = repository;
         this.dataStore = dataStore;
-        this.geoServerApi = geoServerApi;
+        this.geoServerWebclient = geoServerWebclient;
     }
 
     @Transactional
@@ -71,7 +75,7 @@ public class ShapeFileService {
             featureStore.addFeatures(source.getFeatures(Filter.INCLUDE));
             dataTempFile.dispose();*/
 
-           ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
+            ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
             ShapefileDataStore shapefileDataStore = (ShapefileDataStore) dataStoreFactory.createDataStore(tempFile.toUri().toURL());
 
             // Lê as features do shapefile
@@ -89,7 +93,7 @@ public class ShapeFileService {
             // Deleta o arquivo temporário
             Files.delete(tempFile);
 
-            return nativeName;
+            return nativeName.replace("/temp/", "").replace(".shp", "");
         } catch (Exception e) {
             throw new RuntimeException("Erro ao carregar o shapefile: " + e.getMessage());
         }
@@ -97,21 +101,34 @@ public class ShapeFileService {
 
     private static Path getTempFile(MultipartFile file) throws IOException {
         // Salva o arquivo no disco temporariamente
-        Path tempFile = Files.createTempFile(Objects.requireNonNull(file.getOriginalFilename()).replace(".shp",""), ".shp");
+        var fileName = file.getOriginalFilename();
+        fileName = fileName.replaceAll(" ", "_");
+        fileName = fileName.toLowerCase();
+        fileName = Utils.removerAcentos(fileName);
+        Path tempFile = Files.createTempFile(fileName.replace(".shp", ""), ".shp");
         Files.write(tempFile, file.getBytes());
         return tempFile;
     }
 
     public List<ShapeFile> cadastrar(List<MultipartFile> files) {
         var shapes = files.stream().map(multipartFile -> {
-            var nativeName = uploadShapefile(multipartFile);
-            var layerName = Objects.requireNonNull(multipartFile.getOriginalFilename()).replace(".shp","");
-            var resposta = geoServerApi.createLayer("geo_portal_wk","geo_portal_ds",layerName,nativeName);
+            var titulo = Objects.requireNonNull(multipartFile.getOriginalFilename()).replace(".shp", "");
+            var nomeTabela = uploadShapefile(multipartFile);
+            var status = geoServerWebclient.publicarShape(
+                    nomeTabela,
+                    titulo);
             var shape = new ShapeFile();
-            shape.setCaminhoArquivo(resposta.toString());
+            shape.setTitulo(titulo);
+            shape.setNomeTaleba(nomeTabela);
+            shape.setPublicado(status);
             return shape;
         }).toList();
-       return repository.saveAll(shapes);
+        return repository.saveAll(shapes);
+    }
+    public ResponseEntity<String> buscarGeoJson(Integer id) {
+      ShapeFile shapeFile = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ShapeFile não encontado."));
+      if(!shapeFile.isPublicado()) throw new ResourceNotFoundException("ShapeFile não publicado.");
+      return  geoServerWebclient.buscarGeoJson(shapeFile.getNomeTaleba());
     }
 }
 

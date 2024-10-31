@@ -21,8 +21,8 @@ public class ShapeFileController {
     }
 
 
-    @PostMapping("/uploadShapefile")
-    public ResponseEntity<List<ShapeFile>> cadastrar(@RequestBody List<MultipartFile> files)  {
+    @PostMapping("/cadastrar-shapes")
+    public ResponseEntity<List<ShapeFile>> cadastrar(@RequestParam("file") List<MultipartFile> files)  {
         if (files != null && !files.isEmpty()){
             return ResponseEntity.ok(shapeFileService.cadastrar(files));
         }
@@ -43,5 +43,10 @@ public class ShapeFileController {
     @GetMapping
     public ResponseEntity<List<ShapeFile>> listar(@RequestParam Integer pontTempo) {
         return ResponseEntity.ok(shapeFileService.listarPorPonto(pontTempo));
+    }
+
+    @GetMapping("/geo-json/{id}")
+    public ResponseEntity<String> buscarGeoJson(@PathVariable Integer id) {
+        return shapeFileService.buscarGeoJson(id);
     }
 }

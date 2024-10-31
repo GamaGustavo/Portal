@@ -1,7 +1,9 @@
 package ifs.edu.br.portal.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
@@ -15,12 +17,16 @@ public class ShapeFile  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(length = 200)
-    private String caminhoArquivo;
+    private String titulo;
+    @Column(length = 200)
+    private String nomeTaleba;
+    @Column
+    private boolean publicado;
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null) return false;
+        if (this == o) return true;
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
