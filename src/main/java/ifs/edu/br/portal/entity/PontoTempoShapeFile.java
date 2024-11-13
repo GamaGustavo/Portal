@@ -1,5 +1,6 @@
 package ifs.edu.br.portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ public class PontoTempoShapeFile {
     private Integer shapeFileOrdem;
 
     @ManyToOne
+    @JsonIgnore
     @MapsId("pontoTempoId")
     @JoinColumn(name = "ponto_tempo_id")
     private PontoTempo pontoTempo;

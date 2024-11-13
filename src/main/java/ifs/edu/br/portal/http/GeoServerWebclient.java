@@ -18,9 +18,9 @@ public class GeoServerWebclient {
                               @Value("${geoserver.username}") String username,
                               @Value("${geoserver.password}") String password) {
         restClient = RestClient.builder()
-                .requestFactory(new HttpComponentsClientHttpRequestFactory())
                 .baseUrl(baseUrl)
                 .defaultHeader("Accept", "application/json")
+                .defaultHeader("Content-Type", "application/json")
                 .defaultHeaders(httpHeaders -> httpHeaders.setBasicAuth(username, password))
                 .build();
     }

@@ -60,20 +60,6 @@ public class ShapeFileService {
     private String uploadShapefile(MultipartFile file) {
         try {
             Path tempFile = getTempFile(file);
-/*
-            // Cria o ShapefileDataStore
-            DataStore dataTempFile = DataStoreFinder.getDataStore(Collections.singletonMap("url", tempFile.toUri().toURL()));
-
-            // Lê as features do shapefile
-            String inputTypeName = Arrays.stream(dataTempFile.getTypeNames()).findFirst().orElse("");
-            SimpleFeatureType simpleFeatureType = dataTempFile.getSchema(inputTypeName);
-            SimpleFeatureSource source = dataTempFile.getFeatureSource(inputTypeName);
-
-            // Adiciona as features no DataStore (PostGIS)
-            dataStore.createSchema(simpleFeatureType);
-            SimpleFeatureStore featureStore = (SimpleFeatureStore) dataStore.getFeatureSource(inputTypeName);
-            featureStore.addFeatures(source.getFeatures(Filter.INCLUDE));
-            dataTempFile.dispose();*/
 
             ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
             ShapefileDataStore shapefileDataStore = (ShapefileDataStore) dataStoreFactory.createDataStore(tempFile.toUri().toURL());
@@ -115,8 +101,8 @@ public class ShapeFileService {
             var titulo = Objects.requireNonNull(multipartFile.getOriginalFilename()).replace(".shp", "");
             var nomeTabela = uploadShapefile(multipartFile);
             var status = geoServerWebclient.publicarShape(
-                    nomeTabela,
-                    titulo);
+                    titulo,
+                    nomeTabela);
             var shape = new ShapeFile();
             shape.setTitulo(titulo);
             shape.setNomeTaleba(nomeTabela);
@@ -125,10 +111,11 @@ public class ShapeFileService {
         }).toList();
         return repository.saveAll(shapes);
     }
+
     public ResponseEntity<String> buscarGeoJson(Integer id) {
-      ShapeFile shapeFile = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ShapeFile não encontado."));
-      if(!shapeFile.isPublicado()) throw new ResourceNotFoundException("ShapeFile não publicado.");
-      return  geoServerWebclient.buscarGeoJson(shapeFile.getNomeTaleba());
+        ShapeFile shapeFile = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ShapeFile não encontado."));
+        if (!shapeFile.isPublicado()) throw new ResourceNotFoundException("ShapeFile não publicado.");
+        return geoServerWebclient.buscarGeoJson(shapeFile.getNomeTaleba());
     }
 }
 

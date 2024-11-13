@@ -29,8 +29,8 @@ public class PontoTempoController {
         return ResponseEntity.of(pontoTempoService.editar(pontoTempo));
     }
 
-    @DeleteMapping
-    public ResponseEntity<PontoTempo> deletar(@RequestParam Integer id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<PontoTempo> deletar(@PathVariable Integer id) {
         return ResponseEntity.of(pontoTempoService.deletar(id));
     }
 
