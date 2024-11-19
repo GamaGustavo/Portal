@@ -5,6 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.util.logging.Logger;
 
 @Component
 public class GeoServerWebclient {
@@ -43,8 +47,17 @@ public class GeoServerWebclient {
     }
 
     public ResponseEntity<String> buscarGeoJson(String nomeTabela) {
-        var uri = "/" + workspace + "/ows?service=WFS&version=1.3.0&request=GetFeature&typeName=" + workspace + "%3A" + nomeTabela + "&maxFeatures=100&outputFormat=application%2Fjson";
-        return restClient.get().uri(uri).retrieve().toEntity(String.class);
+        String url = UriComponentsBuilder
+                .fromUri(URI.create("/"+workspace +"/ows"))
+                .queryParam("service", "WFS")
+                .queryParam("version", "1.3.0")
+                .queryParam("request", "GetFeature")
+                .queryParam("typeName", workspace +":areas_de_quilombolas3809183468663378145")
+                .queryParam("maxFeatures", 100)
+                .queryParam("outputFormat", "application/json")
+                .toUriString();
+        Logger.getLogger("GeoServer").info(url);
+        return restClient.get().uri(url).retrieve().toEntity(String.class);
     }
 
 }

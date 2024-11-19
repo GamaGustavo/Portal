@@ -113,9 +113,9 @@ public class ShapeFileService {
     }
 
     public ResponseEntity<String> buscarGeoJson(Integer id) {
-        ShapeFile shapeFile = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ShapeFile não encontado."));
-        if (!shapeFile.isPublicado()) throw new ResourceNotFoundException("ShapeFile não publicado.");
-        return geoServerWebclient.buscarGeoJson(shapeFile.getNomeTaleba());
+        ShapeFile shape = repository.findByMapId(id);
+        if (!shape.isPublicado()) throw new ResourceNotFoundException("ShapeFile não publicado.");
+        return geoServerWebclient.buscarGeoJson(shape.getNomeTaleba());
     }
 }
 
