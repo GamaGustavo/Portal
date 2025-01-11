@@ -10,7 +10,7 @@
     </parent>
     <groupId>ifs.edu.br</groupId>
     <artifactId>Portal</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>Portal</name>
     <description>Portal</description>
     <properties>

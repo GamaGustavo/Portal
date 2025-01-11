@@ -52,11 +52,12 @@ public class GeoServerWebclient {
                 .queryParam("service", "WFS")
                 .queryParam("version", "1.3.0")
                 .queryParam("request", "GetFeature")
-                .queryParam("typeName", workspace +":areas_de_quilombolas3809183468663378145")
+                .queryParam("typeName", workspace +":"+nomeTabela)
                 .queryParam("maxFeatures", 100)
                 .queryParam("outputFormat", "application/json")
                 .toUriString();
         Logger.getLogger("GeoServer").info(url);
+
         return restClient.get().uri(url).retrieve().toEntity(String.class);
     }
 
